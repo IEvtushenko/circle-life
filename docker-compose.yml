@@ -1,89 +1,22 @@
 version: '3.2'
 services:
 
-    api-php:
-        build:
-            context: ./api/docker/php
-        environment:
-            PHP_IDE_CONFIG: "serverName=localhost"
-        depends_on:
-            - api-postgres
-            - api-rabbitmq
-        links:
-            - api-postgres:api-postgres
+    api-golang:
+        image: golang
         volumes:
-            - ./api/docker/php/php.ini:/usr/local/etc/php/php.ini
-            - ./api/:/var/www:delegated
-        ulimits:
-            nproc: 65535
-            nofile:
-                soft: 1048576
-                hard: 1048576
-
-    api-nginx:
-        build:
-            context: ./api/docker/nginx
+            - ./api:/var/www:delegated
         ports:
             - 8070:80
-        depends_on:
-            - api-php
-        volumes:
-            - ./api/docker/logs:/var/log/nginx
-            - ./api/public:/var/www/public:delegated
-
-    api-postgres:
-        image: postgres:12-alpine
-        ports:
-            - 5432:5432
-        environment:
-            - POSTGRES_PASSWORD=postgres
-        volumes:
-            - api-dbpostgresvolume:/var/lib/postgresql/data:delegated
-
-    api-rabbitmq:
-        image: rabbitmq:3-management-alpine
-        environment:
-            RABBITMQ_DEFAULT_USER: rabbit
-            RABBITMQ_DEFAULT_PASS: rabbit
-            RABBITMQ_DEFAULT_VHOST: api-book24-wms
-        ports:
-            - 8072:15672
-            - 5672:5672
-        volumes:
-            - ./api/docker/rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins
-
-    api-mailer:
-        image: mailhog/mailhog
-        restart: unless-stopped
-        ports:
-            - 1025:1025
-            - 8074:8025
-
-    swagger-ui:
-        image: swaggerapi/swagger-ui
-        ports:
-            - 8071:8080
-        environment:
-            API_URL: http://127.0.0.1:8070/api.json
-
-    frontend-nginx:
+        working_dir: /var/www
         build:
-            context: ./frontend/docker/nginx
-        volumes:
-            - ./frontend:/var/www/frontend:delegated
-        depends_on:
-            - api-php
-        ports:
-            - 8075:80
+            context: ./api/docker/golang
+        command: go run ./main.go
 
     frontend-nodejs:
-        image: node:12-alpine
+        image: node:13-alpine
         volumes:
             - ./frontend:/var/www/frontend:delegated
         working_dir: /var/www/frontend
         tty: true
         ports:
-            - 8076:8080
-
-volumes:
-  api-dbpostgresvolume:
+            - 8081:8080

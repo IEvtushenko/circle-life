@@ -1,6 +1,6 @@
 <template>
   <div class="hello">
-    <h1>{{ msg }}</h1>
+    <h1>{{ info }}</h1>
     <p>
       For a guide and recipes on how to configure / customize this project,<br>
       check out the
@@ -31,10 +31,24 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: 'HelloWorld',
   props: {
     msg: String
+  },
+
+  data() {
+    return {
+      info: null,
+    }
+  },
+
+  created() {
+    axios
+          .get('https://api.coindesk.com/v1/bpi/currentprice.json')
+          .then(response => (this.info = response));
   }
 }
 </script>
