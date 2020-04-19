@@ -2,15 +2,10 @@ version: '3.2'
 services:
 
     api-golang:
-        image: golang
-        volumes:
-            - ./api:/var/www:delegated
         ports:
-            - 8070:80
-        working_dir: /var/www
-        build:
-            context: ./api/docker/golang
-        command: go run ./main.go
+            - 8080:8080
+        restart: unless-stopped
+        build: ./api/docker
 
     frontend-nodejs:
         image: node:13-alpine
