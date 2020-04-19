@@ -1,7 +1,7 @@
 FROM golang:alpine
 
 ENV APP_NAME testproject
-ENV PORT 8080
+ENV PORT 9081
 
 COPY main.go /src/
 WORKDIR /src

@@ -47,13 +47,12 @@ export default {
 
   created() {
     axios
-          .get('https://api.coindesk.com/v1/bpi/currentprice.json')
-          .then(response => (this.info = response));
+          .get('http://localhost:8080/test')
+          .then(response => this.info = response.data);
   }
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 h3 {
   margin: 40px 0 0;
