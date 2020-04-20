@@ -5,7 +5,9 @@ services:
         ports:
             - 8080:9081
         restart: unless-stopped
-        build: ./api/docker
+        build:
+            context: ./
+            dockerfile: ./docker/api/Dockerfile
 
     frontend-nodejs:
         image: node:13-alpine
